@@ -1,6 +1,6 @@
 use std::fs::File;
 use rocket::serde::json::Json;
-use crate::schemas::prediction_message::prediction_message;
+use crate::schemas::prediction_message::PredictionMessage;
 use crate::schemas::prediction_request::prediction_request;
 
 #[get("/model")]
