@@ -1,7 +1,7 @@
 use rocket::serde::{Deserialize, Serialize, json::Json};
 
 #[derive(Serialize, Deserialize)]
-pub struct generate_respons{
+pub struct GenerateRespons{
     generated_text: String
 }
 

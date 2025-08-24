@@ -1,35 +1,35 @@
 use std::option::IterMut;
-use llama_cpp::{LlamaModel, LlamaParams, LlamaSession, SessionParams};
+use llama_cpp::{CompletionHandle, LlamaContextError, LlamaModel, LlamaParams, LlamaSession, SessionParams, TokensToStrings};
 use llama_cpp::standard_sampler::StandardSampler;
 use once_cell::unsync::Lazy;
 use serde::Serialize;
 use serde_json::json;
 
-const model_path: &str = "";
-const MODEL: Lazy<LlamaModel> = Lazy::new(|| {
+const DEFAULT_MODEL_PATH: &str = "";
+//TODO: turn CHAT_MODEL into CHAT_MODELS with HashMap
+const CHAT_MODEL: Lazy<LlamaModel> = Lazy::new(|| {
     LlamaModel::load_from_file("", LlamaParams::default())
-        .expect("Failed to load MODEL")
+        .expect("Failed to load the model")
 });
 
-pub struct chat_model {
+pub struct ChatModel {
     session : LlamaSession,
 }
 
-impl chat_model {
+impl Chat_model {
     fn new() -> Self {
         return Self {session: MODEL.create_session(SessionParams::default())
-                            .unwrap()
+                            .expect("ERROR: Unable to load model")
         }
     }
 
-    pub fn completition(&mut self, context: &str) -> impl Iterator<Item = String>{
-        self.session.advance_context(context).unwrap();
-        return self.session
-            .start_completing_with(StandardSampler::default(), 1024)
-            .unwrap()
-            .into_strings()
-            .into_iter();
+    pub fn completion(&mut self, context: &str) -> Result<impl Iterator<Item = String>, LlamaContextError>{
+        self.session.advance_context(context)?;
 
+        let completing:CompletionHandle = self.session.start_completing_with(StandardSampler::default(), 1024)?;
+        let result: TokensToStrings<CompletionHandle> = completing.into_strings()
+                    .into_iter();
+        return Ok(result);
     }
 
     pub fn model_info(&self) -> &str {
