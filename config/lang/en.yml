@@ -1,0 +1,4 @@
+error:
+  vector_module_equal_zero: "ERROR: One or both of the vectors is zero, cannot compute cosine similarity."
+  chat_model_file_not_found: "ERROR: Chat model path not found"
+  embedding_model_file_not_found: "ERROR: Embedding model path not found"
